@@ -28,11 +28,18 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
       const VolunteerCollections = client.db("volunteers").collection("totalvolunteers");
   app.post('/addVolunteer', (req,res) => {
+    
         const title = req.body.title;
         const date = req.body.date;
         const file = req.files.file;
-
         console.log(file, date, title);
+
+
+        VolunteerCollections.insertOne({ title, date, file })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+
 
         file.mv(`${__dirname}/volunteers/${file.name}`, err => {
           if(err){
